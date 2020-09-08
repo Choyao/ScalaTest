@@ -42,8 +42,8 @@ class TypeInterceptor extends Interceptor{
 
     eventLists.clear()
 
-    import scala.collection.JavaConversions._
-    for(event <- list){
+    import scala.jdk.CollectionConverters._
+    for(event <- list.asScala){
       eventLists.add(intercept(event))
     }
 

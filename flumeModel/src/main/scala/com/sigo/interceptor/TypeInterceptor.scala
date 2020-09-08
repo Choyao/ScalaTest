@@ -4,10 +4,11 @@ import java.util
 
 import org.apache.flume.{Context, Event}
 import org.apache.flume.interceptor.Interceptor
+import scala.jdk.CollectionConverters._
 
 class TypeInterceptor extends Interceptor {
 
-  import scala.collection.JavaConversions._
+
 
   var eventLists: util.ArrayList[Event] = new util.ArrayList[Event]()
 
@@ -45,8 +46,8 @@ class TypeInterceptor extends Interceptor {
 
     eventLists.clear()
 
-    import scala.collection.JavaConversions._
-    for (event <- list) {
+
+    for(event <- list.asScala){
       eventLists.add(intercept(event))
     }
 

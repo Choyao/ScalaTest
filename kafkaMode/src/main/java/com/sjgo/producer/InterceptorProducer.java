@@ -20,10 +20,10 @@ public class InterceptorProducer {
         interceptors.add("com.sjgo.interceptor.TimeInterceptor");
         properties.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, interceptors);
 
-        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(properties);
+        KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties);
         for (int i = 0; i < 10; i++) {
 
-            ProducerRecord<String, String> record = new ProducerRecord<String, String>("first","sigo","sjgo"+ i);
+            ProducerRecord<String, String> record = new ProducerRecord<>("first", "sigo", "sjgo" + i);
             kafkaProducer.send(record);
         }
 
