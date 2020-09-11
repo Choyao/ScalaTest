@@ -11,8 +11,6 @@ object ScalaDemo  {
     assert(res == "\\c")
 */
 
-    var len =
-    println(len)
   }
 
 
