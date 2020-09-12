@@ -50,17 +50,16 @@ object Rational {
 
     grep(".*gcd.*")
 
-    def grep(parten : String):String={
-       for {
+    def grep(parten : String):Array[String]= {
+      val lines: Array[String] = for {
         file <- filesHere
         if file.getName.endsWith(".scala")
         line <- fileLines(file)
         if line.trim.matches(parten)
       } yield line
-      {
-        println(file + ":"+ line.trim)
-       1
-      }}
+      lines
+    }
+  }
 
 
     def fileLines(file : java.io.File) = scala.io.Source.fromFile(file).getLines().toList
