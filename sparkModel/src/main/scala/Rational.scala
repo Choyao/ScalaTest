@@ -1,6 +1,6 @@
 import java.io.File
 
-class Rational(n: Int, d: Int) {
+class Rational(n: Int, d: Int) extends Ordered[Rational]{
   require(d != 0)
   private val g = gcd(n.abs, d.abs)
 
@@ -42,7 +42,8 @@ class Rational(n: Int, d: Int) {
   private def gcd(n: Int, d: Int): Int =
     if (d == 0) n else gcd(d, n % d)
 
-
+  override def compare(that: Rational): Int =
+    (this.num * that.denom)-(that.num * this.denom)
 }
 
 
