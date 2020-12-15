@@ -15,7 +15,7 @@ abstract class Element {
 
   def beside(e: Element): Element = {
     val thish = this highten e.hight
-    val thath = e highten  this.hight
+    val thath = e highten this.hight
     new ArrayElement(
       for (
         (line1, line2) <- thish.contents zip thath.contents)
@@ -47,23 +47,27 @@ object Element {
 
   def elem(ch: Char, width: Int, hight: Int): Element = new UniformElement(ch, width, hight)
 
+  def get(ar: Array[String], ar2: Array[String]): Array[String] = {
+    for ((line, line2) <- ar zip ar2)
+      yield line + line2
+  }
 
   def main(args: Array[String]): Unit = {
 
-    val a = Element.elem(Array("s", "b","n","t"))
-    val b = Element.elem(Array("nc", "nc"))
 
-
-    val s = a.beside(b)
-    println(s)
-
-    get(get(Array("-","-","-","-"),Array("a","b","c","d")),Array("+","+","+","+")).foreach(print _)
+    def longestWord(words: Array[String]) = {
+      var word = words(0)
+      var idx = 0
+      for (i <- 1 until words.length)
+        if (words(i).length > word.length) {
+          word = words(i)
+          idx = i
+        }
+      (word, idx)
+    }
 
 
   }
 
-  def get(ar:Array[String],ar2:Array[String]):Array[String] = {
-    for((line,line2) <- ar zip ar2)
-      yield line + line2
-  }
+
 }
