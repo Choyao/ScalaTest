@@ -1,3 +1,3 @@
-class ScalaLearn {
+class     ScalaLearn {
 
 }
