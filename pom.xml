@@ -13,10 +13,11 @@
         <module>kafkaMode</module>
         <module>hiveModel</module>
         <module>sparkModel</module>
+        <module>flinkModel</module>
     </modules>
 
     <properties>
-        <scala.version>2.13.3</scala.version>
+        <scala.version>2.11.12</scala.version>
     </properties>
 
     <dependencies>
@@ -38,4 +39,31 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- 编译scala 生成 .class 文件-->
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.4.6</version>
+            </plugin>
+            <plugin>
+                <!--打包插件-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <descriptorRefs>jar-with-dependencies</descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
