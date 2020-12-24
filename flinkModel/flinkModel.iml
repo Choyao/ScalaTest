@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="scala-sdk-2.11.12" level="application" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-scala_2.11:1.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-core:1.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-annotations:1.10.1" level="project" />
@@ -52,12 +53,17 @@
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-slf4j_2.11:2.5.21" level="project" />
     <orderEntry type="library" name="Maven: org.clapper:grizzled-slf4j_2.11:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: com.github.scopt:scopt_2.11:3.5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.4" level="project" />
     <orderEntry type="library" name="Maven: com.twitter:chill_2.11:0.7.6" level="project" />
     <orderEntry type="library" name="Maven: com.twitter:chill-java:0.7.6" level="project" />
     <orderEntry type="library" name="Maven: org.lz4:lz4-java:1.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-clients_2.11:1.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-optimizer_2.11:1.10.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-0.10_2.11:1.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-0.9_2.11:1.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-base_2.11:1.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:0.10.2.1" level="project" />
+    <orderEntry type="library" name="Maven: net.jpountz.lz4:lz4:1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.2.6" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.11.12" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
@@ -78,7 +84,5 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest-matchers-core_2.13:3.2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest-shouldmatchers_2.13:3.2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scalatest:scalatest-mustmatchers_2.13:3.2.0" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.scala-lang:scala-compiler:2.11.0" level="project" />
-    <orderEntry type="library" name="scala-sdk-2.11.12" level="application" />
   </component>
 </module>
