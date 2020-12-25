@@ -1,6 +1,7 @@
 package com.choyao.apitest
 
 import org.apache.commons.io.IOUtils
+import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala._
 
 object TransformTest {
@@ -9,7 +10,7 @@ object TransformTest {
 
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setParallelism(1)
-    val lineStream = env.readTextFile("C:\\Project\\ScalaTest\\flinkModel\\src\\main\\resources\\sensor.txt")
+    val lineStream = env.readTextFile("C:\\Users\\ADMIN\\IdeaProjects\\ScalaTest\\flinkModel\\src\\main\\resources\\sensor.txt")
 
 
     val sensorStream = lineStream.map(data=> {
@@ -17,11 +18,31 @@ object TransformTest {
       Sensor(list(0),list(1).toLong,list(2).toDouble)
 
     })
-    sensorStream.keyBy("id")
+// 1.keyBy
+/*    sensorStream.keyBy("id")
       .minBy("temperature")
-      .print()
+      .print()*/
+
+// 2.reduce
+/*    sensorStream.keyBy("id")
+        .reduce((curState,newData) =>{
+          Sensor(curState.id,newData.timestamp,curState.temperature.min(newData.temperature))
+        })
+        .print()*/
+
+// 3.split and select
+      sensorStream.split(data => {
+        if(data.temperature > 30.0) Seq("high") else Seq("low")
+      })
+          .select("high")
+          .print("high")
 
     env.execute("Transform Test")
 
+  }
+
+
+  class MyReduceFunction extends  ReduceFunction[Sensor]{
+    override def reduce(t: Sensor, t1: Sensor): Sensor = ???
   }
 }
