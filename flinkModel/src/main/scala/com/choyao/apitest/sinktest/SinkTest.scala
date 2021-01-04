@@ -1,5 +1,6 @@
-package com.choyao.apitest
+package com.choyao.apitest.sinktest
 
+import com.choyao.apitest.sourcetest.Sensor
 import org.apache.flink.streaming.api.scala._
 
 object SinkTest {
