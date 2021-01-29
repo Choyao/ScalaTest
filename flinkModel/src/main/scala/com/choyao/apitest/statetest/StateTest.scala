@@ -14,16 +14,39 @@ object StateTest {
     val inptStream = env.socketTextStream("192.168.10.151", 7777)
     val sensorStream = inptStream.map(line =>{ val arr = line.split(",")
       new Sensor(arr(0),arr(1).toLong,arr(2).toDouble)} )
+
+    // 自定义状态编程
     val alertStream = sensorStream
       .keyBy(_.id)
         .map(new WarningMapper())
         .print()
+
+    // keyed state 有状态的 算子
+    val alertStream2 = sensorStream
+      .keyBy(_.id)
+//      .flatMapWithState()
+        .mapWithState[(String,Double,Double),Double](( sensor: Sensor, option: Option[Double]) =>{
+          case (sensor: Sensor,None) => (null,Some(sensor.temperature))
+          case (sensor: Sensor,lastTemp:Some[Double]) =>{
+            if( (sensor.temperature - lastTemp.get).abs > 10)
+              (("warning",sensor.temperature,lastTemp.get),Some(sensor.temperature))
+            else
+              (null,Some(sensor.temperature))
+          }
+
+        })
+
+
+
+
     env.execute("state test")
+
+
 
   }
 
 }
-// 状态 编程 keyed
+// 状态 编程 keyed 实现 Rich函数
 class WarningMapper() extends RichMapFunction[Sensor,String]{
   var valueState:ValueState[Double] = _
   override def open(configuration: Configuration): Unit = {
