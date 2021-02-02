@@ -12,13 +12,13 @@ object ProcessTest {
   def main(args: Array[String]): Unit = {
 
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    val inputStream = env.socketTextStream("192.168.10.151",7777)
+    env.setParallelism(1)
+    val inputStream = env.socketTextStream("192.168.10.151", 7777)
     val pendingStream = inputStream
-      .flatMap(_.split(","))
-      .map(line => new Sensor(line(0).toString,line(1).toLong,line(2).toDouble))
+      .map(line =>  Sensor(line.split(",")(0).toString, line.split(",")(1).toLong, line.split(",")(2).toDouble))
       .keyBy(_.id)
       .process(new WarningKeyedProcessFunction())
-        .print()
+      .print()
 
 
     env.execute("process test")
@@ -28,12 +28,11 @@ object ProcessTest {
 }
 
 
-
-class MyKeyedProcessFunction() extends KeyedProcessFunction[String,Sensor,String]{
+class MyKeyedProcessFunction() extends KeyedProcessFunction[String, Sensor, String] {
   override def processElement(value: Sensor, ctx: KeyedProcessFunction[String, Sensor, String]#Context, out: Collector[String]): Unit = {
 
     // 测输出流
-    ctx.output(new OutputTag("hot"), value)
+    ctx.output[Sensor](new OutputTag("hot"),value)
 
     // 当前水印
     ctx.timerService().currentWatermark()
@@ -43,28 +42,34 @@ class MyKeyedProcessFunction() extends KeyedProcessFunction[String,Sensor,String
 
   }
 }
+
 // 连续10s 连续温度上升 就报警
-class WarningKeyedProcessFunction() extends KeyedProcessFunction[String,Sensor,Sensor]{
+class WarningKeyedProcessFunction() extends KeyedProcessFunction[String, Sensor, String] {
 
-  lazy val valueState:ValueState[Double] = getRuntimeContext.getState(new ValueStateDescriptor("temperature",classOf[Double]))
+  lazy val valueState: ValueState[Double] = getRuntimeContext.getState(new ValueStateDescriptor("temperature", classOf[Double]))
 
-  lazy val timerTimestamp :ValueState[Long] = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timerTimestamp",classOf[Long]))
+  lazy val timerTimestamp: ValueState[Long] = getRuntimeContext.getState(new ValueStateDescriptor[Long]("timerTimestamp", classOf[Long]))
 
-  override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[String, Sensor, Sensor]#OnTimerContext, out: Collector[Sensor]): Unit = {
-
+  override def onTimer(timestamp: Long, ctx: KeyedProcessFunction[String, Sensor, String ]#OnTimerContext, out: Collector[String]): Unit = {
+    out.collect(ctx.getCurrentKey + timerTimestamp.value() + "temper" +valueState.value())
+    ctx.timerService().deleteProcessingTimeTimer(timerTimestamp.value())
+    timerTimestamp.clear()
 
   }
 
-  override def processElement(value: Sensor, ctx: KeyedProcessFunction[String, Sensor, Sensor]#Context, out: Collector[Sensor]): Unit = {
+  override def processElement(value: Sensor, ctx: KeyedProcessFunction[String, Sensor, String]#Context, out: Collector[String]): Unit = {
 
     val lastTemp = valueState.value()
     val time = timerTimestamp.value()
     valueState.update(value.temperature)
-    //判断是否是第一条数据
-    if (lastTemp > value.temperature || time == 0 ){
+    //判断是否是第一条数据 设置定时器
+    if (lastTemp < value.temperature && time == 0) {
       val ts = ctx.timerService().currentProcessingTime() + 10000L
       ctx.timerService().registerProcessingTimeTimer(ts)
       timerTimestamp.update(ts)
+    } else if (lastTemp > value.temperature) { //关闭定时器 时间初始化
+      ctx.timerService().deleteProcessingTimeTimer(time)
+      timerTimestamp.clear()
     }
 
 

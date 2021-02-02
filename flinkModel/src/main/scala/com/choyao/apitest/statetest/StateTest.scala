@@ -25,7 +25,7 @@ object StateTest {
     val alertStream2 = sensorStream
       .keyBy(_.id)
 //      .flatMapWithState()
-        .mapWithState[(String,Double,Double),Double](( sensor: Sensor, option: Option[Double]) =>{
+        .mapWithState[(String,Double,Double),Double] {
           case (sensor: Sensor,None) => (null,Some(sensor.temperature))
           case (sensor: Sensor,lastTemp:Some[Double]) =>{
             if( (sensor.temperature - lastTemp.get).abs > 10)
@@ -34,7 +34,7 @@ object StateTest {
               (null,Some(sensor.temperature))
           }
 
-        })
+        }
 
 
 
