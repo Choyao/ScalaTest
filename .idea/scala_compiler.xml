@@ -4,10 +4,6 @@
     <parameters>
       <parameter value="-target:jim-1.8" />
     </parameters>
-    <profile name="Maven 2" modules="ScalaTest,flinkModel,flumeModel,hiveModel,kafkaMode,sparkModel">
-      <parameters>
-        <parameter value="-target:jvm-1.8" />
-      </parameters>
-    </profile>
+    <profile name="Maven 1" modules="ScalaTest,flinkModel,flumeModel,hiveModel,kafkaMode,sparkModel" />
   </component>
 </project>
