@@ -1,6 +1,6 @@
-package com.choyao.apitest
+package com.choyao.apitest.transformtest
 
-import org.apache.commons.io.IOUtils
+import com.choyao.apitest.sourcetest.Sensor
 import org.apache.flink.api.common.functions.ReduceFunction
 import org.apache.flink.streaming.api.scala._
 

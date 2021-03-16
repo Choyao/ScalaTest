@@ -1,4 +1,4 @@
-package com.choyao.apitest
+package com.choyao.apitest.sourcetest
 
 import java.util.Properties
 

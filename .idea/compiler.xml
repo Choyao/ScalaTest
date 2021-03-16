@@ -10,6 +10,7 @@
         <module name="flumeModel" />
         <module name="kafkaMode" />
         <module name="sparkModel" />
+        <module name="flinkModel" />
       </profile>
     </annotationProcessing>
   </component>
