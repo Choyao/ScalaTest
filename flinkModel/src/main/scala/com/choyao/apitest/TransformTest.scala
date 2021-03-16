@@ -10,8 +10,7 @@ object TransformTest {
 
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setParallelism(1)
-    val lineStream = env.readTextFile("C:\\Users\\ADMIN\\IdeaProjects\\ScalaTest\\flinkModel\\src\\main\\resources\\sensor.txt")
-
+    val lineStream = env.readTextFile(TransformTest.getClass.getResource("/")+"../../src/main/resources/sensor.txt")
 
     val sensorStream = lineStream.map(data=> {
       val list = data.split(",")
@@ -31,11 +30,21 @@ object TransformTest {
         .print()*/
 
 // 3.split and select
-      sensorStream.split(data => {
+      val splitStream = sensorStream.split(data => {
         if(data.temperature > 30.0) Seq("high") else Seq("low")
       })
-          .select("high")
-          .print("high")
+      val highStream = splitStream.select("high")
+      val lowStream = splitStream.select("low")
+
+// 4.connect and coMap or coFlatMap
+      val conStream = highStream.connect(lowStream)
+      val conMapStream = conStream.map(highStream => {
+        ("warning",highStream.id,highStream.temperature,highStream.timestamp)
+      },lowStream => {
+        ("normal",lowStream.temperature)
+      })
+      conMapStream.print()
+
 
     env.execute("Transform Test")
 
