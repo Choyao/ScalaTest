@@ -78,6 +78,7 @@ object KafkaPipelineTest {
     resultTable.insertInto("kafkaOutputTable")
     tableEnv.toAppendStream[Double](aggSqlTable).print()
 
+    tableEnv.execute("kafkaPipelineTest")
   }
 
 }
