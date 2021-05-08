@@ -1,10 +1,11 @@
 package com.choyao.apitest.tabletest
 
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.table.api.DataTypes
+import org.apache.flink.table.api.{DataTypes, EnvironmentSettings}
 import org.apache.flink.table.api.scala._
 import org.apache.flink.table.descriptors.{Csv, Kafka, Schema}
 import org.apache.flink.table.types.DataType
+import org.apache.flink.types.Row
 
 object KafkaPipelineTest {
 
@@ -12,13 +13,17 @@ object KafkaPipelineTest {
     //1.创建环境
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setParallelism(1)
+    val set = EnvironmentSettings.newInstance()
+      .useBlinkPlanner()
+      .inStreamingMode()
+      .build()
 
-    val tableEnv = StreamTableEnvironment.create(env)
+    val tableEnv = StreamTableEnvironment.create(env,set)
 
     //2.从Kafka读取数据
 
     tableEnv.connect(new Kafka()
-      .version("0.11")
+      .version("0.10")
       .topic("sensor")
       .property("zookeeper.connect", "192.168.10.151:2181")
       .property("bootstrap.servers", "192.168.10.151:9092")
@@ -55,14 +60,14 @@ object KafkaPipelineTest {
     // 3.2.2 SQL 聚合
     val aggSqlTable = tableEnv.sqlQuery(
       """
-        |select count(id) as count from kafkaInputTalbe
+        |select COUNT(id) as ct from kafkaInputTable
         |group by id
         """.stripMargin)
 
     // 4.输出到kafka
 
     tableEnv.connect(new Kafka()
-      .version("0.11")
+      .version("0.10")
       .topic("sinkTest")
       .property("zookeeper.connect", "localhost:2181")
       .property("bootstrap.servers", "localhost:9092")
@@ -73,10 +78,9 @@ object KafkaPipelineTest {
           .field("temperature",DataTypes.DOUBLE())
       )
       .createTemporaryTable("kafkaOutputTable")
-
     resultSqlTable.insertInto("kafkaOutputTable")
     resultTable.insertInto("kafkaOutputTable")
-    tableEnv.toAppendStream[Double](aggSqlTable).print()
+    tableEnv.toRetractStream(aggSqlTable,Row.class).print("")
 
     tableEnv.execute("kafkaPipelineTest")
   }
