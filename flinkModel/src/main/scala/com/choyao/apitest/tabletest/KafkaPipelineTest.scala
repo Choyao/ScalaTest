@@ -25,8 +25,8 @@ object KafkaPipelineTest {
     tableEnv.connect(new Kafka()
       .version("0.10")
       .topic("sensor")
-      .property("zookeeper.connect", "192.168.10.151:2181")
-      .property("bootstrap.servers", "192.168.10.151:9092")
+      .property("zookeeper.connect", "localhost:2181")
+      .property("bootstrap.servers", "localhost:9092")
     )
       .withFormat(new Csv())
       .withSchema(new Schema()
@@ -78,9 +78,10 @@ object KafkaPipelineTest {
           .field("temperature",DataTypes.DOUBLE())
       )
       .createTemporaryTable("kafkaOutputTable")
+
     resultSqlTable.insertInto("kafkaOutputTable")
     resultTable.insertInto("kafkaOutputTable")
-    tableEnv.toRetractStream(aggSqlTable,Row.class).print("")
+    tableEnv.toRetractStream[Row](aggSqlTable).print()
 
     tableEnv.execute("kafkaPipelineTest")
   }
