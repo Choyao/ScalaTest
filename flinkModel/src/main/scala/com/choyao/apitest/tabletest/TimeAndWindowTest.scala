@@ -33,10 +33,11 @@ object TimeAndWindowTest {
         val data = line.split(",")
         Sensor(data(0).toString, data(1).toLong, data(2).toDouble)
       }).assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor[Sensor](Time.seconds(1)) {
-      override def extractTimestamp(t: Sensor): Long = t.timestamp * 1000
+      override def extractTimestamp(t: Sensor): Long = t.timestamp * 1000// 无序的超时时间
     })
 
     val sensorTable = tableEnv.fromDataStream(pendingStream,'id,'temperature,'timestamp.rowtime as 'et)
+    // 滑动窗口
     tableEnv.createTemporaryView("sensorTable",sensorTable)
    val resultTable = tableEnv.sqlQuery(
      """
@@ -46,10 +47,22 @@ object TimeAndWindowTest {
        |id , tumble(et,interval '10' second)
        |""".stripMargin)
 
-     resultTable.toRetractStream[Row].print()
+    // resultTable.toRetractStream[Row].print("tumble")
 
+    val overResultTable = tableEnv.sqlQuery(
+      """
+        |select id,et,count(id) over  ow
+        |from sensorTable
+        |window ow as (
+        | partition by id
+        | order by et
+        | rows between 2 preceding and current row
+        |)
+        |
+        |""".stripMargin)
     //    table.printSchema()
 //    table.toAppendStream[Row].print()
+    overResultTable.toAppendStream[Row].print("over sql")
 
     env.execute("time and window table")
   }
